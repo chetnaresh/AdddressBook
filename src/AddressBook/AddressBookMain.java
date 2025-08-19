@@ -1,27 +1,54 @@
 package AddressBook;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class AddressBookMain {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        AddressBook addressBook = new AddressBook();
 
-        System.out.println("Welcome to the Address Book Program!");
+        // Dictionary of AddressBookName -> AddressBook object
+        Map<String, AddressBook> addressBookSystem = new HashMap<>();
+
+        System.out.println("Welcome to the Address Book System!");
 
         while (true) {
             System.out.println("\nChoose an option:");
-            System.out.println("1. Add New Contact(s)");
-            System.out.println("2. Edit Contact");
-            System.out.println("3. Delete Contact");
-            System.out.println("4. Show All Contacts");
-            System.out.println("5. Exit");
+            System.out.println("1. Add a New Address Book");
+            System.out.println("2. Add New Contact(s) to an Address Book");
+            System.out.println("3. Edit Contact in an Address Book");
+            System.out.println("4. Delete Contact in an Address Book");
+            System.out.println("5. Show All Contacts in an Address Book");
+            System.out.println("6. Show All Address Books");
+            System.out.println("7. Exit");
             System.out.print("Enter choice: ");
             int choice = sc.nextInt();
             sc.nextLine(); // consume newline
 
             switch (choice) {
                 case 1:
+                    System.out.print("Enter Address Book Name: ");
+                    String bookName = sc.nextLine();
+
+                    if (addressBookSystem.containsKey(bookName)) {
+                        System.out.println("Address Book with this name already exists!");
+                    } else {
+                        addressBookSystem.put(bookName, new AddressBook());
+                        System.out.println("Address Book '" + bookName + "' created successfully!");
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter Address Book Name: ");
+                    String addBook = sc.nextLine();
+                    AddressBook abAdd = addressBookSystem.get(addBook);
+
+                    if (abAdd == null) {
+                        System.out.println("No Address Book found with this name!");
+                        break;
+                    }
+
                     System.out.print("How many contacts do you want to add? ");
                     int n = sc.nextInt();
                     sc.nextLine(); // consume newline
@@ -54,31 +81,66 @@ public class AddressBookMain {
                         String email = sc.nextLine();
 
                         Contacts contact = new Contacts(firstName, lastName, address, city, state, zip, phone, email);
-                        addressBook.addContact(contact);
+                        abAdd.addContact(contact);
                     }
                     break;
 
-                case 2:
-                    addressBook.editContactByName();
-                    break;
-
                 case 3:
-                    addressBook.deleteContactByName();
+                    System.out.print("Enter Address Book Name: ");
+                    String editBook = sc.nextLine();
+                    AddressBook abEdit = addressBookSystem.get(editBook);
+
+                    if (abEdit != null) {
+                        abEdit.editContactByName();
+                    } else {
+                        System.out.println("No Address Book found with this name!");
+                    }
                     break;
 
                 case 4:
-                    System.out.println("\nContacts in Address Book:");
-                    if (addressBook.getContacts().isEmpty()) {
-                        System.out.println("No contacts available.");
+                    System.out.print("Enter Address Book Name: ");
+                    String delBook = sc.nextLine();
+                    AddressBook abDel = addressBookSystem.get(delBook);
+
+                    if (abDel != null) {
+                        abDel.deleteContactByName();
                     } else {
-                        for (Contacts c : addressBook.getContacts()) {
-                            System.out.println(c);
-                        }
+                        System.out.println("No Address Book found with this name!");
                     }
                     break;
 
                 case 5:
-                    System.out.println("Exiting Address Book. Goodbye!");
+                    System.out.print("Enter Address Book Name: ");
+                    String showBook = sc.nextLine();
+                    AddressBook abShow = addressBookSystem.get(showBook);
+
+                    if (abShow != null) {
+                        System.out.println("\nContacts in Address Book '" + showBook + "':");
+                        if (abShow.getContacts().isEmpty()) {
+                            System.out.println("No contacts available.");
+                        } else {
+                            for (Contacts c : abShow.getContacts()) {
+                                System.out.println(c);
+                            }
+                        }
+                    } else {
+                        System.out.println("No Address Book found with this name!");
+                    }
+                    break;
+
+                case 6:
+                    if (addressBookSystem.isEmpty()) {
+                        System.out.println("No Address Books available.");
+                    } else {
+                        System.out.println("Available Address Books:");
+                        for (String name : addressBookSystem.keySet()) {
+                            System.out.println("- " + name);
+                        }
+                    }
+                    break;
+
+                case 7:
+                    System.out.println("Exiting Address Book System. Goodbye!");
                     sc.close();
                     return;
 
