@@ -16,4 +16,9 @@ public class AddressBook {
         contacts.add(contact);
         System.out.println("Contact added successfully!");
     }
+
+    // Getter to access contacts
+    public ArrayList<Contacts> getContacts() {
+        return contacts;
+    }
 }
